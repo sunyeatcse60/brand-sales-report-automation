@@ -23,12 +23,11 @@ jobs:
 
       - name: Create Google Credentials File
         run: |
-          cat <<EOF > gcreds.json
-          ${{ secrets.GOOGLE_CREDS_JSON }}
-          EOF
+          echo '${{ secrets.GOOGLE_CREDS_JSON }}' > gcreds.json
 
       - name: Verify Files
         run: |
+          pwd
           ls -la
           python --version
 
@@ -41,10 +40,16 @@ jobs:
         run: |
           python main.py
 
-      - name: Upload Excel Artifact
+      - name: List Generated Files
+        if: always()
+        run: |
+          ls -lh *.xlsx || true
+
+      - name: Upload Excel Reports
         if: always()
         uses: actions/upload-artifact@v4
         with:
-          name: generated-report
-          path: "*.xlsx"
-          if-no-files-found: ignore
+          name: brand-sales-reports
+          path: |
+            *.xlsx
+          if-no-files-found: warn

@@ -12,7 +12,23 @@ ODOO_DB = os.getenv("ODOO_DB")
 ODOO_USERNAME = os.getenv("ODOO_USERNAME")
 ODOO_PASSWORD = os.getenv("ODOO_PASSWORD")
 
-REPORT_TYPE = "koontor_weekly"
+# REPORT_TYPE = "koontor_weekly"
+REPORTS = {
+    "koontor_weekly": "Kontoor Weekly",
+    "koontor_monthly": "Kontoor Monthly Invoice",
+    "koontor_monthly_delivery_based": "Kontoor Monthly Delivery",
+    "h&m_monthly": "H&M Monthly",
+    "kohls_monthly": "Kohls Monthly",
+    "kohls_monthly_delivery": "Kohls Monthly Delivery",
+    "gap_monthly": "Gap Monthly",
+    "gap_monthly_delivery_based": "Gap Monthly Delivery",
+    "c&a_monthly": "C&A Monthly",
+    "bestseller_monthly": "Bestseller Monthly",
+    "defacto_monthly": "Defacto Monthly",
+    "carters_monthly": "Carters Monthly",
+    "compiled_file": "Compiled Invoice Delivery",
+    "compiled_order_release_file": "Compiled Order Release"
+}
 COMPANY_ID = 1
 
 today = datetime.today()
@@ -59,7 +75,7 @@ def login():
     return uid
 
 
-def create_wizard(uid):
+def create_wizard(uid,REPORTS):
 
     payload = {
         "jsonrpc": "2.0",
@@ -70,7 +86,7 @@ def create_wizard(uid):
             "args": [
                 [],
                 {
-                    "report_type": REPORT_TYPE,
+                    "report_type": REPORTS,
                     "company_id": COMPANY_ID,
                     "date_from": FROM_DATE,
                     "date_to": TO_DATE
@@ -160,7 +176,7 @@ def generate_report(uid, wizard_id):
     return report
 
 
-def download_report(report):
+def download_report(report,REPORTS):
 
     options = json.dumps(report["data"], separators=(",", ":"))
     context = json.dumps(report["context"], separators=(",", ":"))
@@ -183,7 +199,7 @@ def download_report(report):
     if "html" in content_type.lower():
         raise Exception("Got HTML instead of xlsx:\n" + response.text[:500])
 
-    filename = f"{REPORT_TYPE}.xlsx"
+    filename = f"{REPORTS}.xlsx"
 
     with open(filename, "wb") as file:
         file.write(response.content)
