@@ -8,25 +8,43 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-      - uses: actions/checkout@v4
+      - name: Checkout Repository
+        uses: actions/checkout@v4
 
-      - uses: actions/setup-python@v5
+      - name: Setup Python
+        uses: actions/setup-python@v5
         with:
           python-version: "3.11"
 
-      - run: |
+      - name: Install Dependencies
+        run: |
           python -m pip install --upgrade pip
           pip install -r requirements.txt
 
-      - name: Create Google Credentials
+      - name: Create Google Credentials File
         run: |
-          echo '${{ secrets.GOOGLE_CREDS_JSON }}' > gcreds.json
+          cat <<EOF > gcreds.json
+          ${{ secrets.GOOGLE_CREDS_JSON }}
+          EOF
 
-      - name: Run Report
+      - name: Verify Files
+        run: |
+          ls -la
+          python --version
+
+      - name: Run Automation
         env:
           ODOO_URL: ${{ secrets.ODOO_URL }}
           ODOO_DB: ${{ secrets.ODOO_DB }}
           ODOO_USERNAME: ${{ secrets.ODOO_USERNAME }}
           ODOO_PASSWORD: ${{ secrets.ODOO_PASSWORD }}
         run: |
-          python brand_report.py
+          python main.py
+
+      - name: Upload Excel Artifact
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: generated-report
+          path: "*.xlsx"
+          if-no-files-found: ignore

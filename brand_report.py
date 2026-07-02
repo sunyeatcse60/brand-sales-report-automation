@@ -16,7 +16,7 @@ REPORT_TYPE = "koontor_weekly"
 COMPANY_ID = 1
 
 today = datetime.today()
-from_date = today - timedelta(days=15)
+from_date = today - timedelta(days=30)
 
 FROM_DATE = from_date.strftime("%Y-%m-%d")
 TO_DATE = today.strftime("%Y-%m-%d")
