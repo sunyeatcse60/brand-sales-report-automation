@@ -1,0 +1,7 @@
+.env
+gcreds.json
+*.xlsx
+~$*.xlsx
+__pycache__/
+*.pyc
+.venv/
