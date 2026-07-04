@@ -3,6 +3,9 @@ name: Brand Report Automation
 on:
   workflow_dispatch:
 
+  schedule:
+   - cron: "30 2 * * *"
+
 jobs:
   report:
     runs-on: ubuntu-latest
